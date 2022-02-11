@@ -295,7 +295,7 @@ namespace WebApplication6.Controllers
                             codigo = gestorProductAllCar[i].codigo,
                             nombre = gestorProductAllCar[i].nombre,
                             descripcion = gestorProductAllCar[i].descripcion,
-                            precio = gestorProductAllCar[i].precio + comprasConfirmadas[i].precio,
+                            precio = (gestorProductAllCar[i].precio * gestorProductAllCar[i].cantidad) + comprasConfirmadas[i].precio,
                             cantidad = gestorProductAllCar[i].cantidad + comprasConfirmadas[i].cantidad
                         });
                         context.compraconfirmada.Remove(filtroProductos);
