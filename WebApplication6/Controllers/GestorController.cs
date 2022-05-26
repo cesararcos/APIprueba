@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebApiModel;
 using WebApplication6.Context;
 using WebApplication6.Models;
 
@@ -18,6 +19,198 @@ namespace WebApplication6.Controllers
         public GestorController(AppDbContext context)
         {
             this.context = context;
+        }
+
+        //PRODUCTOS
+        [Route("getProductos")]
+        [HttpGet]
+        public ActionResult GetProductos()
+        {
+            try
+            {
+                return Ok(context.productos_db.ToList());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("{id}", Name = "getGestorProductos")]
+        public ActionResult GetGestorProductos(int id)
+        {
+            try
+            {
+                var gestor = context.gestores_bd.FirstOrDefault(g => g.id == id);
+                return Ok(gestor);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Route("createProductos")]
+        [HttpPost]
+        public ActionResult CreateProductos([FromBody] Productos_db gestor)
+        {
+            try
+            {
+                context.productos_db.Add(gestor);
+                context.SaveChanges();
+                return CreatedAtRoute("getGestorProductos", new { id = gestor.id }, gestor);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        //CLIENTES
+        [Route("getClientes")]
+        [HttpGet]
+        public ActionResult GetClientes()
+        {
+            try
+            {
+                return Ok(context.clientes_db.ToList());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("{id}", Name = "getGestorClientes")]
+        public ActionResult GetGestorClientess(int id)
+        {
+            try
+            {
+                var gestor = context.clientes_db.FirstOrDefault(g => g.id == id);
+                return Ok(gestor);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Route("createClientes")]
+        [HttpPost]
+        public ActionResult CreateClientes([FromBody] Clientes_db gestor)
+        {
+            try
+            {
+                context.clientes_db.Add(gestor);
+                context.SaveChanges();
+                return CreatedAtRoute("getGestorClientes", new { id = gestor.id }, gestor);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        //ENCABEZADO
+        [Route("createEncabezado")]
+        [HttpPost]
+        public ActionResult CreateEncabezado([FromBody] Facturacion_db gestor)
+        {
+            try
+            {   
+                List<Encabezado_db> list = new List<Encabezado_db>();
+                List<Detalle_db> listDetalle = new List<Detalle_db>();
+                var filtroClientes = context.clientes_db.FirstOrDefault(g => g.id == gestor.idcliente);
+                var filtroProductoss = context.productos_db.FirstOrDefault(g => g.id == gestor.idproducto);
+
+                if (filtroClientes != null && filtroProductoss != null)
+                {
+                    list.Add(new Encabezado_db()
+                    {
+                        idproducto = gestor.idproducto,
+                        idcliente = gestor.idcliente
+                    });
+
+                    //guarda encabezado
+                    context.encabezado_db.Add(list[0]);
+                    context.SaveChanges();
+
+                    int idEncabezado = (from c in context.encabezado_db
+                                             orderby c.id descending
+                                             select c.id).FirstOrDefault();
+                    listDetalle.Add(new Detalle_db()
+                    {
+                        id = idEncabezado,
+                        cantidad = gestor.cantidad,
+                        precio = gestor.precio,
+                        fecha = gestor.fecha
+                    });
+
+                    //guarda detalle
+                    context.detalle_db.Add(listDetalle[0]);
+                    context.SaveChanges();
+
+                    //return CreatedAtRoute("getGestorClientes", new { id = gestor.id }, gestor);
+                    return Ok("ok");
+                }
+                else
+                {
+                    return BadRequest("no existe");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        // Metodo para editar un producto administrador
+        [Route("editProductt/{id}")]
+        [HttpPut]
+        public ActionResult EditProductt(int id, [FromBody] Productos_db edit)
+        {
+            try
+            {
+                //var filtroProductoss = context.productos_db.FirstOrDefault(g => g.id == edit.id);
+                if (edit.id == id)
+                {
+                    context.Entry(edit).State = EntityState.Modified;
+                    context.SaveChanges();
+                    return CreatedAtRoute("getGestorProductos", new { id = edit.id }, edit);
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Route("deleteProductt/{id}")]
+        [HttpDelete]
+        public ActionResult DeleteProductt(int id)
+        {
+            try
+            {
+                var gestorEliminar = context.productos_db.FirstOrDefault(g => g.id == id);
+                if (gestorEliminar != null)
+                {
+                    context.productos_db.Remove(gestorEliminar);
+                    context.SaveChanges();
+                    return Ok(id);
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [Route("getGestor")]
@@ -92,8 +285,9 @@ namespace WebApplication6.Controllers
             }
         }
 
+        [Route("post")]
         [HttpPost]
-        public ActionResult Post([FromBody] Gestores_Bd gestor)
+        public ActionResult Post([FromBody] Gestores_db gestor)
         {
             try
             {
@@ -110,7 +304,7 @@ namespace WebApplication6.Controllers
         // Metodo Post para guardar el usuario logueado exitosamente
         [Route("saveUser")]
         [HttpPost]
-        public ActionResult SaveUser([FromBody] LogUsuario_Bd logUsuario_Bd)
+        public ActionResult SaveUser([FromBody] LogUsuario_db logUsuario_Bd)
         {
             try
             {
@@ -193,7 +387,7 @@ namespace WebApplication6.Controllers
         // Metodo Post para crear un producto administrador
         [Route("createProd")]
         [HttpPost]
-        public ActionResult CreateProd([FromBody] CrearProducto crearProducto)
+        public ActionResult CreateProd([FromBody] CrearProducto_db crearProducto)
         {
             try
             {
@@ -210,7 +404,7 @@ namespace WebApplication6.Controllers
         // Metodo para editar un producto administrador
         [Route("editProduct/{codigo}")]
         [HttpPut]
-        public ActionResult EditProduct(int codigo, [FromBody] CrearProducto editarProducto)
+        public ActionResult EditProduct(int codigo, [FromBody] CrearProducto_db editarProducto)
         {
             try
             {
@@ -259,7 +453,7 @@ namespace WebApplication6.Controllers
         // Metodo para enviar producto a carrito
         [Route("sendCar")]
         [HttpPost]
-        public ActionResult SendCar([FromBody] EnviarCarrito enviarCarrito)
+        public ActionResult SendCar([FromBody] EnviarCarrito_db enviarCarrito)
         {
             try
             {
@@ -280,9 +474,9 @@ namespace WebApplication6.Controllers
         {
             try
             {
-                List<EnviarCarrito> gestorProductAllCar = context.enviarcarrito.ToList(); //trae productos que estan en carrito
-                List<CompraConfirmada> list = new List<CompraConfirmada>(); //almacena los productos del carrito para confirmarlos
-                List<CompraConfirmada> comprasConfirmadas = context.compraconfirmada.ToList(); //trae productos ya comprados
+                List<EnviarCarrito_db> gestorProductAllCar = context.enviarcarrito.ToList(); //trae productos que estan en carrito
+                List<CompraConfirmada_db> list = new List<CompraConfirmada_db>(); //almacena los productos del carrito para confirmarlos
+                List<CompraConfirmada_db> comprasConfirmadas = context.compraconfirmada.ToList(); //trae productos ya comprados
 
                 for (int i = 0; i < gestorProductAllCar.Count; i++)
                 {
@@ -290,7 +484,7 @@ namespace WebApplication6.Controllers
                         context.compraconfirmada.FirstOrDefault(g => g.codigo == gestorProductAllCar[i].codigo); //filtra y trae el producto repetidos ya comprados vs carrito
                     if (filtroProductos != null)
                     {
-                        list.Add(new CompraConfirmada()
+                        list.Add(new CompraConfirmada_db()
                         {
                             codigo = gestorProductAllCar[i].codigo,
                             nombre = gestorProductAllCar[i].nombre,
@@ -305,7 +499,7 @@ namespace WebApplication6.Controllers
                     }
                     else
                     {
-                        list.Add(new CompraConfirmada()
+                        list.Add(new CompraConfirmada_db()
                         {
                             codigo = gestorProductAllCar[i].codigo,
                             nombre = gestorProductAllCar[i].nombre,
@@ -367,7 +561,7 @@ namespace WebApplication6.Controllers
         }
 
         [HttpPut("{id}")]
-        public ActionResult Put(int id, [FromBody] Gestores_Bd gestor)
+        public ActionResult Put(int id, [FromBody] Gestores_db gestor)
         {
             try
             {
