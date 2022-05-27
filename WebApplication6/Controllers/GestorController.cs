@@ -118,8 +118,6 @@ namespace WebApplication6.Controllers
         {
             try
             {   
-                //List<Encabezado_db> list = new List<Encabezado_db>();
-                //List<Detalle_db> listDetalle = new List<Detalle_db>();
                 var filtroClientes = context.clientes_db.FirstOrDefault(g => g.id == gestor.idcliente);
                 var filtroProductoss = context.productos_db.FirstOrDefault(g => g.id == gestor.idproducto);
 
@@ -129,12 +127,6 @@ namespace WebApplication6.Controllers
                 {
                     WebApiLogica.Services services = new WebApiLogica.Services();
                     List<Encabezado_db> list = services.FiltroEncabezado(gestor);
-
-                    //list.Add(new Encabezado_db()
-                    //{
-                    //    idproducto = gestor.idproducto,
-                    //    idcliente = gestor.idcliente
-                    //});
 
                     //guarda encabezado
                     context.encabezado_db.Add(list[0]);
@@ -146,14 +138,6 @@ namespace WebApplication6.Controllers
 
                     List<Detalle_db> listDetalle = services.FiltroDetalle(idEncabezado, gestor.cantidad, gestor.precio, gestor.fecha);
 
-                    //listDetalle.Add(new Detalle_db()
-                    //{
-                    //    id = idEncabezado,
-                    //    cantidad = gestor.cantidad,
-                    //    precio = gestor.precio,
-                    //    fecha = gestor.fecha
-                    //});
-
                     //guarda detalle
                     context.detalle_db.Add(listDetalle[0]);
                     context.SaveChanges();
@@ -164,6 +148,57 @@ namespace WebApplication6.Controllers
                 else
                 {
                     return BadRequest("no existe");
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Route("editEncabezado/{id}")]
+        [HttpPut]
+        public ActionResult EditEncabezado(int id, [FromBody] Encabezado_db editEncabezado)
+        {
+            try
+            {
+                if (editEncabezado.id == id)
+                {
+                    context.Entry(editEncabezado).State = EntityState.Modified;
+                    context.SaveChanges();
+                    return Ok("ok");
+                }
+                else
+                {
+                    return BadRequest();
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [Route("deleteEncabezado/{id}")]
+        [HttpDelete]
+        public ActionResult DeleteEncabezado(int id)
+        {
+            try
+            {
+                var gestorEliminarDetalle = context.detalle_db.FirstOrDefault(g => g.id == id);
+                var gestorEliminarEncabezado = context.encabezado_db.FirstOrDefault(g => g.id == id);
+                if (gestorEliminarDetalle != null && gestorEliminarEncabezado != null)
+                {
+                    context.detalle_db.Remove(gestorEliminarDetalle);
+                    context.SaveChanges();
+
+                    context.encabezado_db.Remove(gestorEliminarEncabezado);
+                    context.SaveChanges();
+                    return Ok(id);
+                }
+                else
+                {
+                    return BadRequest();
                 }
             }
             catch (Exception ex)
