@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using WebApiModel;
 using WebApplication6.Context;
 using WebApplication6.Controllers;
@@ -37,6 +38,21 @@ namespace WebApiTest
             productos.precio = 1;
             productos.cantdisponible = 1;
             var result = gestor.CreateProductos(productos);
+            Assert.IsNotNull(result);
+
+        }
+
+        [TestMethod]
+        public void TestMethodCreateFact()
+        {
+            GestorController gestor = new GestorController(context);
+            Facturacion_db productos = new Facturacion_db();
+            productos.idproducto = 2;
+            productos.idcliente = 1;
+            productos.cantidad = 7;
+            productos.precio = 18500;
+            productos.fecha = DateTime.Now;
+            var result = gestor.CreateEncabezado(productos);
             Assert.IsNotNull(result);
 
         }
