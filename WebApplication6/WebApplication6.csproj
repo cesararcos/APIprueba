@@ -10,6 +10,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\WebApiLogica\WebApiLogica.csproj" />
     <ProjectReference Include="..\WebApiModel\WebApiModel.csproj" />
   </ItemGroup>
 

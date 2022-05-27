@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApiModel", "WebApiModel\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiTest", "WebApiTest\WebApiTest.csproj", "{486CA852-4E48-43FF-BDBF-449C637DEF7B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiLogica", "WebApiLogica\WebApiLogica.csproj", "{2D48D8B1-EF53-4091-B5A5-5F9EBF7BB030}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{486CA852-4E48-43FF-BDBF-449C637DEF7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{486CA852-4E48-43FF-BDBF-449C637DEF7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{486CA852-4E48-43FF-BDBF-449C637DEF7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D48D8B1-EF53-4091-B5A5-5F9EBF7BB030}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D48D8B1-EF53-4091-B5A5-5F9EBF7BB030}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D48D8B1-EF53-4091-B5A5-5F9EBF7BB030}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D48D8B1-EF53-4091-B5A5-5F9EBF7BB030}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

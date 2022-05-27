@@ -118,18 +118,23 @@ namespace WebApplication6.Controllers
         {
             try
             {   
-                List<Encabezado_db> list = new List<Encabezado_db>();
-                List<Detalle_db> listDetalle = new List<Detalle_db>();
+                //List<Encabezado_db> list = new List<Encabezado_db>();
+                //List<Detalle_db> listDetalle = new List<Detalle_db>();
                 var filtroClientes = context.clientes_db.FirstOrDefault(g => g.id == gestor.idcliente);
                 var filtroProductoss = context.productos_db.FirstOrDefault(g => g.id == gestor.idproducto);
 
+                
+                
                 if (filtroClientes != null && filtroProductoss != null)
                 {
-                    list.Add(new Encabezado_db()
-                    {
-                        idproducto = gestor.idproducto,
-                        idcliente = gestor.idcliente
-                    });
+                    WebApiLogica.Services services = new WebApiLogica.Services();
+                    List<Encabezado_db> list = services.FiltroEncabezado(gestor);
+
+                    //list.Add(new Encabezado_db()
+                    //{
+                    //    idproducto = gestor.idproducto,
+                    //    idcliente = gestor.idcliente
+                    //});
 
                     //guarda encabezado
                     context.encabezado_db.Add(list[0]);
@@ -138,13 +143,16 @@ namespace WebApplication6.Controllers
                     int idEncabezado = (from c in context.encabezado_db
                                              orderby c.id descending
                                              select c.id).FirstOrDefault();
-                    listDetalle.Add(new Detalle_db()
-                    {
-                        id = idEncabezado,
-                        cantidad = gestor.cantidad,
-                        precio = gestor.precio,
-                        fecha = gestor.fecha
-                    });
+
+                    List<Detalle_db> listDetalle = services.FiltroDetalle(idEncabezado, gestor.cantidad, gestor.precio, gestor.fecha);
+
+                    //listDetalle.Add(new Detalle_db()
+                    //{
+                    //    id = idEncabezado,
+                    //    cantidad = gestor.cantidad,
+                    //    precio = gestor.precio,
+                    //    fecha = gestor.fecha
+                    //});
 
                     //guarda detalle
                     context.detalle_db.Add(listDetalle[0]);
