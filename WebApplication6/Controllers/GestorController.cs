@@ -112,6 +112,33 @@ namespace WebApplication6.Controllers
         }
 
         //ENCABEZADO
+        [Route("getEncabezado")]
+        [HttpGet]
+        public ActionResult GetEncabezado()
+        {
+            try
+            {
+                var listCustomer = (from _Encabezado in context.encabezado_db
+                                    join _Detalle in context.detalle_db on _Encabezado.id equals _Detalle.id
+                                    select new Facturacion_db
+                                    {
+                                        id = _Encabezado.id,
+                                        idproducto = _Encabezado.idproducto,
+                                        idcliente = _Encabezado.idcliente,
+                                        iddetalle = _Detalle.id,
+                                        cantidad = _Detalle.cantidad,
+                                        precio = _Detalle.precio,
+                                        fecha = _Detalle.fecha
+                                    }).ToList();
+
+                return Ok(listCustomer);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [Route("createEncabezado")]
         [HttpPost]
         public ActionResult CreateEncabezado([FromBody] Facturacion_db gestor)
