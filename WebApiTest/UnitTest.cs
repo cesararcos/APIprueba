@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using WebApiModel;
 using WebApplication6.Context;
 using WebApplication6.Controllers;
 
@@ -23,6 +24,19 @@ namespace WebApiTest
         {
             GestorController gestor = new GestorController(context);
             var result = gestor.GetClientes();
+            Assert.IsNotNull(result);
+
+        }
+
+        [TestMethod]
+        public void TestMethodCreateProd()
+        {
+            GestorController gestor = new GestorController(context);
+            Productos_db productos = new Productos_db();
+            productos.nombre = "producto prueba unitaria";
+            productos.precio = 1;
+            productos.cantdisponible = 1;
+            var result = gestor.CreateProductos(productos);
             Assert.IsNotNull(result);
 
         }
